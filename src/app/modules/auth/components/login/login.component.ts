@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import {Message,MessageService, PrimeNGConfig} from 'primeng/api';
+import { Message, MessageService, PrimeNGConfig } from 'primeng/api';
 import { LoginPresenter } from '../../models/presenter/login.presenter';
+import { MENSAJES_ERROR } from '../../constants/auth.constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public hasError: boolean;
   public returnUrl: string;
   public isLoading$: Observable<boolean>;
+
   msgs1: Message[];
 
   private unsubscribe: Subscription[] = [];
@@ -42,9 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.initForm();
     this.returnUrl =
       this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
-      this.msgs1 = [
-        {severity:'error', summary:'Error', detail:'Datos de conexión incorrectos.'}
-    ];
+
 
     this.primengConfig.ripple = true;
   }
@@ -75,21 +75,33 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  get email(){
+  get email() {
     return this.loginForm.get('email')?.value
   }
 
-  get password(){
+  get password() {
     return this.loginForm.get('password')?.value
   }
 
   submit() {
     this.hasError = false;
-    let datosLogin = new LoginPresenter(this.loginForm.getRawValue(), null);
+    const loginSubscr = this.authService.login(this.generarParametrosLogin()).subscribe(res => {
 
+        if(res === MENSAJES_ERROR.UNAUTHORIZED){
+          this.hasError = true;
+          this.msgs1 = [
+            { severity: 'error', summary: 'Error:', detail: res }
+          ];
+          setTimeout(() => {
+            this.hasError = false;
+          }, 7000);
+        }
+    })
+    this.unsubscribe.push(loginSubscr);
+  }
 
-
-
+  public generarParametrosLogin() {
+    return new LoginPresenter(this.loginForm.getRawValue(), null);
   }
 
   ngOnDestroy() {

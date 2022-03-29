@@ -15,9 +15,9 @@
           <h1 class="text-dark mb-3">Bienvenido</h1>
         </div>
 
-        <ng-container *ngIf="!hasError" class="mb-5">
+        <ng-container *ngIf="hasError" class="mb-5">
           <b>
-            <p-messages [(value)]="msgs1"></p-messages>
+            <p-messages [(value)]="msgs1" [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [escape]="true" ></p-messages>
           </b>
         </ng-container>
 

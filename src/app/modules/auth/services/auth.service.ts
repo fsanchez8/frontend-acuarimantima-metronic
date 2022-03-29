@@ -3,6 +3,10 @@ import { Observable, BehaviorSubject, of, Subscription } from 'rxjs';
 import { UserModel } from '../models/user.model';
 
 import { Router } from '@angular/router';
+import { LoginPresenter } from '../models/presenter/login.presenter';
+import { AuthHTTPService } from './auth-http/auth-http.service';
+import { catchError, finalize, map } from 'rxjs/operators';
+import { MENSAJES_ERROR } from '../constants/auth.constants';
 
 export type UserType = UserModel | undefined;
 
@@ -21,7 +25,8 @@ export class AuthService implements OnDestroy {
 
 
   constructor(
-    private router: Router
+    private readonly router: Router,
+    private readonly authHttpService: AuthHTTPService
   ) {
     this.isLoadingSubject = new BehaviorSubject<boolean>(false);
     this.isLoading$ = this.isLoadingSubject.asObservable();
@@ -29,8 +34,20 @@ export class AuthService implements OnDestroy {
   }
 
   // public methods
-  login(email: string, password: string){
-
+  public login(login: LoginPresenter): Observable<any> {
+    this.isLoadingSubject.next(true);
+    return this.authHttpService.login(login).pipe(
+      map((auth) => {
+        return auth
+      }),
+      catchError((err) => {
+        if(err.status === 401){
+            return of(MENSAJES_ERROR.UNAUTHORIZED)
+        }
+        return of(undefined);
+      }),
+      finalize(() => this.isLoadingSubject.next(false))
+    )
   }
 
   logout() {

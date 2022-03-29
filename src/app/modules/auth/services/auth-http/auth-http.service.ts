@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserModel } from '../../models/user.model';
 import { environment } from '../../../../../environments/environment';
 import { AuthModel } from '../../models/auth.model';
+import { LoginPresenter } from '../../models/presenter/login.presenter';
 
 const API_USERS_URL = `${environment.apiUrl}/auth`;
 
@@ -14,11 +15,8 @@ export class AuthHTTPService {
   constructor(private http: HttpClient) {}
 
   // public methods
-  login(email: string, password: string): Observable<any> {
-    return this.http.post<AuthModel>(`${API_USERS_URL}/login`, {
-      email,
-      password,
-    });
+  login(login: LoginPresenter): Observable<any> {
+    return this.http.post<AuthModel>(`${API_USERS_URL}/login`, login);
   }
 
   // CREATE =>  POST: add a new user to the server
