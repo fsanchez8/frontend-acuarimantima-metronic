@@ -10,6 +10,10 @@ import { LogoutComponent } from './components/logout/logout.component';
 import { AuthComponent } from './auth.component';
 import { TranslationModule } from '../i18n/translation.module';
 
+// PrimeNg
+import {MessagesModule} from 'primeng/messages';
+import { MessageService } from 'primeng/api';
+import {MessageModule} from 'primeng/message';
 @NgModule({
   declarations: [
     LoginComponent,
@@ -25,6 +29,11 @@ import { TranslationModule } from '../i18n/translation.module';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MessagesModule,
+    MessageModule
   ],
+  providers:[
+    MessageService
+  ]
 })
 export class AuthModule {}

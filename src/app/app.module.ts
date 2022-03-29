@@ -15,14 +15,6 @@ import { environment } from 'src/environments/environment';
 import { FakeAPIService } from './_fake/fake-api.service';
 // #fake-end#
 
-function appInitializer(authService: AuthService) {
-  return () => {
-    return new Promise((resolve) => {
-      authService.getUserByToken().subscribe().add(resolve);
-    });
-  };
-}
-
 @NgModule({
   declarations: [AppComponent ],
   imports: [
@@ -36,12 +28,7 @@ function appInitializer(authService: AuthService) {
     NgbModule,
   ],
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializer,
-      multi: true,
-      deps: [AuthService],
-    },
+
   ],
   bootstrap: [AppComponent],
 })

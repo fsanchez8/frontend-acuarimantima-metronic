@@ -5,7 +5,8 @@ import { first } from 'rxjs/operators';
 import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import {Message,MessageService, PrimeNGConfig} from 'primeng/api';
+import { LoginPresenter } from '../../models/presenter/login.presenter';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,38 +15,40 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class LoginComponent implements OnInit, OnDestroy {
   // KeenThemes mock, change it to:
   defaultAuth: any = {
-    email: 'admin@demo.com',
-    password: 'demo',
+    email: 'fabio.ssanchez92@gmail.com',
+    password: '123456',
   };
-  loginForm: FormGroup;
-  hasError: boolean;
-  returnUrl: string;
-  isLoading$: Observable<boolean>;
+  public loginForm: FormGroup;
+  public hasError: boolean;
+  public returnUrl: string;
+  public isLoading$: Observable<boolean>;
+  msgs1: Message[];
 
-  // private fields
   private unsubscribe: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService,
+    private primengConfig: PrimeNGConfig
   ) {
     this.isLoading$ = this.authService.isLoading$;
-    // redirect to home if already logged in
-    if (this.authService.currentUserValue) {
-      this.router.navigate(['/']);
-    }
+
   }
 
   ngOnInit(): void {
     this.initForm();
-    // get return url from route parameters or default to '/'
     this.returnUrl =
       this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
+      this.msgs1 = [
+        {severity:'error', summary:'Error', detail:'Datos de conexión incorrectos.'}
+    ];
+
+    this.primengConfig.ripple = true;
   }
 
-  // convenience getter for easy access to form fields
   get f() {
     return this.loginForm.controls;
   }
@@ -58,7 +61,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           Validators.required,
           Validators.email,
           Validators.minLength(3),
-          Validators.maxLength(320), // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+          Validators.maxLength(50),
         ]),
       ],
       password: [
@@ -66,25 +69,27 @@ export class LoginComponent implements OnInit, OnDestroy {
         Validators.compose([
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100),
+          Validators.maxLength(50),
         ]),
       ],
     });
   }
 
+  get email(){
+    return this.loginForm.get('email')?.value
+  }
+
+  get password(){
+    return this.loginForm.get('password')?.value
+  }
+
   submit() {
     this.hasError = false;
-    const loginSubscr = this.authService
-      .login(this.f.email.value, this.f.password.value)
-      .pipe(first())
-      .subscribe((user: UserModel | undefined) => {
-        if (user) {
-          this.router.navigate([this.returnUrl]);
-        } else {
-          this.hasError = true;
-        }
-      });
-    this.unsubscribe.push(loginSubscr);
+    let datosLogin = new LoginPresenter(this.loginForm.getRawValue(), null);
+
+
+
+
   }
 
   ngOnDestroy() {
