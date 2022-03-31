@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Message, MessageService, PrimeNGConfig } from 'primeng/api';
 import { LoginPresenter } from '../../models/presenter/login.presenter';
 import { MENSAJES_ERROR } from '../../constants/auth.constants';
+import { RespuestaLoginDomain } from '../../models/domain/respuesta-login.domain';
+import { RespustaGeneralDomain } from '../../../shared/models/domain/respuesta-general';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -37,14 +39,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     private primengConfig: PrimeNGConfig
   ) {
     this.isLoading$ = this.authService.isLoading$;
-
   }
 
   ngOnInit(): void {
     this.initForm();
     this.returnUrl =
       this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
-
 
     this.primengConfig.ripple = true;
   }
@@ -76,28 +76,35 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   get email() {
-    return this.loginForm.get('email')?.value
+    return this.loginForm.get('email')?.value;
   }
 
   get password() {
-    return this.loginForm.get('password')?.value
+    return this.loginForm.get('password')?.value;
   }
 
-  submit() {
+  public submit() {
     this.hasError = false;
-    const loginSubscr = this.authService.login(this.generarParametrosLogin()).subscribe(res => {
-
-        if(res === MENSAJES_ERROR.UNAUTHORIZED){
-          this.hasError = true;
-          this.msgs1 = [
-            { severity: 'error', summary: 'Error:', detail: res }
-          ];
-          setTimeout(() => {
-            this.hasError = false;
-          }, 7000);
-        }
-    })
+    const loginSubscr = this.authService
+      .login(this.generarParametrosLogin())
+      .subscribe((res) => {
+        this.procesarRespustaSerivicioLogin(res)
+      });
     this.unsubscribe.push(loginSubscr);
+  }
+
+  public procesarRespustaSerivicioLogin(respuesta: RespustaGeneralDomain<RespuestaLoginDomain[]>){
+    if (respuesta.mensaje === MENSAJES_ERROR.UNAUTHORIZED) {
+      this.hasError = true;
+      this.msgs1 = [{ severity: 'error', summary: 'Error:', detail: respuesta.mensaje }];
+    } else {
+      this.guardarSesionCookies(respuesta.response)
+    }
+  }
+
+
+  public guardarSesionCookies(informacionUsuario: RespuestaLoginDomain[]){
+
   }
 
   public generarParametrosLogin() {

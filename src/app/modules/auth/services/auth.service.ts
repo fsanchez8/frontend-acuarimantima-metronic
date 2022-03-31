@@ -7,6 +7,8 @@ import { LoginPresenter } from '../models/presenter/login.presenter';
 import { AuthHTTPService } from './auth-http/auth-http.service';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { MENSAJES_ERROR } from '../constants/auth.constants';
+import { RespustaGeneralDomain } from '../../shared/models/domain/respuesta-general';
+import { RespuestaLoginDomain } from '../models/domain/respuesta-login.domain';
 
 export type UserType = UserModel | undefined;
 
@@ -34,21 +36,36 @@ export class AuthService implements OnDestroy {
   }
 
   // public methods
-  public login(login: LoginPresenter): Observable<any> {
+  public login(login: LoginPresenter): Observable<RespustaGeneralDomain<RespuestaLoginDomain[]>> {
     this.isLoadingSubject.next(true);
-    return this.authHttpService.login(login).pipe(
-      map((auth) => {
-        return auth
-      }),
-      catchError((err) => {
-        if(err.status === 401){
-            return of(MENSAJES_ERROR.UNAUTHORIZED)
-        }
-        return of(undefined);
-      }),
-      finalize(() => this.isLoadingSubject.next(false))
-    )
+    return this.authHttpService.login(login)
+      .pipe(
+        map(result => {
+          if (result) {
+              return of(result)
+          }
+        }),
+        catchError((err) => {
+              if(err.status === 401){
+                  return of(this.retornar401Error())
+              }else {
+                return  of(err)
+              }
+
+        }),
+
+        finalize(() => this.isLoadingSubject.next(false))
+      )
   }
+
+  public retornar401Error(){
+    let dato = new RespustaGeneralDomain()
+    dato.mensaje = "Datos de conexión incorrectos.",
+    dato.codigo = "401",
+    dato.response = []
+    return dato
+  }
+
 
   logout() {
 

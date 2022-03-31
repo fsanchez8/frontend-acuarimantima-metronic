@@ -5,6 +5,8 @@ import { UserModel } from '../../models/user.model';
 import { environment } from '../../../../../environments/environment';
 import { AuthModel } from '../../models/auth.model';
 import { LoginPresenter } from '../../models/presenter/login.presenter';
+import { RespustaGeneralDomain } from 'src/app/modules/shared/models/domain/respuesta-general';
+import { RespuestaLoginDomain } from '../../models/domain/respuesta-login.domain';
 
 const API_USERS_URL = `${environment.apiUrl}/auth`;
 
@@ -15,8 +17,8 @@ export class AuthHTTPService {
   constructor(private http: HttpClient) {}
 
   // public methods
-  login(login: LoginPresenter): Observable<any> {
-    return this.http.post<AuthModel>(`${API_USERS_URL}/login`, login);
+  login(login: LoginPresenter): Observable<RespustaGeneralDomain<RespuestaLoginDomain[]>> {
+    return this.http.post<RespustaGeneralDomain<RespuestaLoginDomain[]>>(`${API_USERS_URL}/login`, login);
   }
 
   // CREATE =>  POST: add a new user to the server
