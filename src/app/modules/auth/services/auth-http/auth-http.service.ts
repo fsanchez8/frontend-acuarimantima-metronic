@@ -8,7 +8,7 @@ import { LoginPresenter } from '../../models/presenter/login.presenter';
 import { RespustaGeneralDomain } from 'src/app/modules/shared/models/domain/respuesta-general';
 import { RespuestaLoginDomain } from '../../models/domain/respuesta-login.domain';
 
-const API_USERS_URL = `${environment.apiUrl}/auth`;
+const API_URL = `${environment.apiUrl}/auth`;
 
 @Injectable({
   providedIn: 'root',
@@ -18,17 +18,17 @@ export class AuthHTTPService {
 
   // public methods
   login(login: LoginPresenter): Observable<RespustaGeneralDomain<RespuestaLoginDomain[]>> {
-    return this.http.post<RespustaGeneralDomain<RespuestaLoginDomain[]>>(`${API_USERS_URL}/login`, login);
+    return this.http.post<RespustaGeneralDomain<RespuestaLoginDomain[]>>(`${API_URL}/login`, login);
   }
 
   // CREATE =>  POST: add a new user to the server
   createUser(user: UserModel): Observable<UserModel> {
-    return this.http.post<UserModel>(API_USERS_URL, user);
+    return this.http.post<UserModel>(API_URL, user);
   }
 
   // Your server should check email => If email exists send link to the user and return true | If email doesn't exist return false
   forgotPassword(email: string): Observable<boolean> {
-    return this.http.post<boolean>(`${API_USERS_URL}/forgot-password`, {
+    return this.http.post<boolean>(`${API_URL}/forgot-password`, {
       email,
     });
   }
@@ -37,7 +37,7 @@ export class AuthHTTPService {
     const httpHeaders = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.get<UserModel>(`${API_USERS_URL}/me`, {
+    return this.http.get<UserModel>(`${API_URL}/me`, {
       headers: httpHeaders,
     });
   }

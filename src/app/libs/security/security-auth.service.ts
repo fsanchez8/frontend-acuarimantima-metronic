@@ -9,63 +9,63 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SecurityAuthService {
 
-  public  urlBase : string;
+  public urlBase: string;
 
   constructor(
     private crypto: CryptoService,
     private cookiesService: CookieService,
-    private http : HttpClient,
-    @Inject('env') private env : string | any
+    private http: HttpClient,
+    @Inject('env') private env: string | any
   ) {
-    this.urlBase   = `${this.env.apiUrl}`
+    this.urlBase = `${this.env.apiUrl}`
   }
 
-  public guardarUuid(uuid: string){
-    this.cookiesService.set('UUID-TOKEN',  this.crypto.encryptAES(uuid), 1, '/', this.env.appDominio );
+  public guardarUuid(uuid: string) {
+    this.cookiesService.set('UUID-TOKEN', this.crypto.encryptAES(uuid), 1, '/', this.env.appDominio);
   }
 
-   public obtenerUuid() : string{
+  public obtenerUuid(): string {
     return this.crypto.decryptAES(this.cookiesService.get('UUID-TOKEN'));
   }
 
   public guardarToken(tokken: string): void {
-      this.cookiesService.set('JWT-TOKKEN',  tokken, 1, '/', this.env.appDominio );
+    this.cookiesService.set('JWT-TOKKEN', tokken, 1, '/', this.env.appDominio);
   }
 
-  public obtenerToken() : string{
+  public obtenerToken(): string {
     return this.cookiesService.get('JWT-TOKKEN');
   }
 
-  public guardarUsuario(username : string){
-    this.cookiesService.set('USUARIO',  this.crypto.encryptAES(username), 1, '/', this.env.appDominio)
+  public guardarUsuario(username: string) {
+    this.cookiesService.set('USUARIO', this.crypto.encryptAES(username), 1, '/', this.env.appDominio)
   }
 
-  public obtenerUsuario() :string {
+  public obtenerUsuario(): string {
     return this.crypto.decryptAES(this.cookiesService.get('USUARIO'));
   }
 
-  public gurdarNombre(name:string){
-     this.cookiesService.set('NOMBRE',  this.crypto.encryptAES(name), 1, '/', this.env.appDominio)
+  public gurdarNombre(name: string) {
+    this.cookiesService.set('NOMBRE', this.crypto.encryptAES(name), 1, '/', this.env.appDominio)
   }
 
-  public obtenerNombre(){
+  public obtenerNombre() {
     return this.crypto.decryptAES(this.cookiesService.get('NOMBRE'));
   }
 
 
-  public guardarApellido(lastName:string){
-     this.cookiesService.set('APELLIDO',  this.crypto.encryptAES(lastName), 1, '/', this.env.appDominio)
+  public guardarApellido(lastName: string) {
+    this.cookiesService.set('APELLIDO', this.crypto.encryptAES(lastName), 1, '/', this.env.appDominio)
   }
 
-  public obtenerApellido(){
+  public obtenerApellido() {
     return this.crypto.decryptAES(this.cookiesService.get('APELLIDO'));
   }
 
-  public guardarRol(rol:string){
-     this.cookiesService.set('ROL',  this.crypto.encryptAES(rol), 1, '/', this.env.appDominio)
+  public guardarRol(rol: string) {
+    this.cookiesService.set('ROL', this.crypto.encryptAES(rol), 1, '/', this.env.appDominio)
   }
 
-  public obtenerRol(){
+  public obtenerRol() {
     return this.crypto.decryptAES(this.cookiesService.get('ROL'));
   }
 
@@ -76,7 +76,7 @@ export class SecurityAuthService {
   //   return this.http.post<AuthDomain>(`${this.urlBase}refresh-token`, autenticationRequest );
   // }
 
-  public getMenuApplication(){
+  public getMenuApplication() {
     console.log(this.obtenerRol());
   }
 
@@ -87,13 +87,13 @@ export class SecurityAuthService {
   //   // return this.http.post<ResponsePresenter<any>>(`${this.urlBase}auth/validate-tokens/`, validate)
   // }
 
-  public clearCookies(){
+  public clearCookies() {
     this.cookiesService.delete('JWT-TOKKEN');
   }
 
-  public isAuthenticated(){
+  public isAuthenticated() {
     const token = this.obtenerToken();
-    if(token != null && token.length > 0){
+    if (token != null && token.length > 0) {
       return true;
     } else {
       return false;

@@ -10,6 +10,7 @@ import { LoginPresenter } from '../../models/presenter/login.presenter';
 import { MENSAJES_ERROR } from '../../constants/auth.constants';
 import { RespuestaLoginDomain } from '../../models/domain/respuesta-login.domain';
 import { RespustaGeneralDomain } from '../../../shared/models/domain/respuesta-general';
+import { SecurityAuthService } from '../../../../libs/security/security-auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -31,12 +32,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   private unsubscribe: Subscription[] = [];
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private messageService: MessageService,
-    private primengConfig: PrimeNGConfig
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly messageService: MessageService,
+    private readonly primengConfig: PrimeNGConfig,
+    private readonly securityAuthService:SecurityAuthService
   ) {
     this.isLoading$ = this.authService.isLoading$;
   }
@@ -93,18 +95,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.unsubscribe.push(loginSubscr);
   }
 
-  public procesarRespustaSerivicioLogin(respuesta: RespustaGeneralDomain<RespuestaLoginDomain[]>){
+  public procesarRespustaSerivicioLogin(respuesta: RespustaGeneralDomain<RespuestaLoginDomain>){
     if (respuesta.mensaje === MENSAJES_ERROR.UNAUTHORIZED) {
       this.hasError = true;
       this.msgs1 = [{ severity: 'error', summary: 'Error:', detail: respuesta.mensaje }];
     } else {
-      this.guardarSesionCookies(respuesta.response)
+       console.log(respuesta.response.docuemento);
+
+      // this.guardarSesionCookies()
     }
   }
 
 
-  public guardarSesionCookies(informacionUsuario: RespuestaLoginDomain[]){
+  public guardarSesionCookies(informacionUsuario: RespustaGeneralDomain<RespuestaLoginDomain[]>){
+    console.log("esta es lo que llega", informacionUsuario);
 
+    // this.securityAuthService.guardarUuid()
   }
 
   public generarParametrosLogin() {

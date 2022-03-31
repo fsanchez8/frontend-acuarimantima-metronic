@@ -14,6 +14,8 @@ import { TranslationModule } from '../i18n/translation.module';
 import {MessagesModule} from 'primeng/messages';
 import { MessageService } from 'primeng/api';
 import {MessageModule} from 'primeng/message';
+import { SecurityAuthService } from '../../libs/security/security-auth.service';
+import { CryptoService } from '../../libs/security/crypto.service';
 @NgModule({
   declarations: [
     LoginComponent,
@@ -33,7 +35,9 @@ import {MessageModule} from 'primeng/message';
     MessageModule
   ],
   providers:[
-    MessageService
+    MessageService,
+    SecurityAuthService,
+    CryptoService
   ]
 })
 export class AuthModule {}

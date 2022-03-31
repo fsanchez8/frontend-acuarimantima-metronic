@@ -36,13 +36,13 @@ export class AuthService implements OnDestroy {
   }
 
   // public methods
-  public login(login: LoginPresenter): Observable<RespustaGeneralDomain<RespuestaLoginDomain[]>> {
+  public login(login: LoginPresenter): Observable<RespustaGeneralDomain<RespuestaLoginDomain>> {
     this.isLoadingSubject.next(true);
     return this.authHttpService.login(login)
       .pipe(
         map(result => {
           if (result) {
-              return of(result)
+              return result
           }
         }),
         catchError((err) => {

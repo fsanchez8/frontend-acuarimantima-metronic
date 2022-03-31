@@ -28,7 +28,7 @@ import { FakeAPIService } from './_fake/fake-api.service';
     NgbModule,
   ],
   providers: [
-
+    {provide: 'env', useValue: environment},
   ],
   bootstrap: [AppComponent],
 })
